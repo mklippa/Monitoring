@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using Emulator.Services;
 
@@ -31,7 +34,15 @@ namespace Emulator.Models
         {
             var report = _reportService.Generate(this);
 
-            throw new NotImplementedException();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5000");
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(report.Errors.Select(x => x.Message));
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var result = client.PostAsync($"/api/monitoring/agents/{Id}/errors", content).Result;
+                //string resultContent = result.Content.ReadAsStringAsync();
+                //Console.WriteLine(resultContent);
+            }
         }
     }
 }
