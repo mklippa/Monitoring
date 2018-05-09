@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
+using Emulator.Models;
+using Emulator.Services;
 
 namespace Emulator
 {
@@ -9,114 +10,58 @@ namespace Emulator
     {
         static void Main(string[] args)
         {
-            // Enter emulator number
-            var count = 0;
-            while (true)
-            {
-                Console.WriteLine("Please, enter the correct emulator number:");
-                if (int.TryParse(Console.ReadLine(), out count))
-                {
-                    break;
-                }
-            }
+            var count = GetEmulatorsCount();
 
-            // Prepare agents
-            var agents = new Agent[count];
-            var reportService = new ReportService();
+            var agents = PrepareAgents(count);
 
-            for (var i = 0; i < agents.Length; i++)
-            {
-                agents[i] = new Agent(i + 1, reportService);
-            }
+            Console.WriteLine("Please press Enter to continue, press Enter again to exit.");
 
-            // Run emulation
-            foreach (var agent in agents)
-            {
-                Task.Factory.StartNew(agent.Run);
-            }
+            Console.ReadLine();
+
+            RunAgents(agents);
 
             Console.ReadLine();
         }
-    }
 
-    public class Agent
-    {
-        private readonly IReportService _reportService;
-
-        public Agent(int id, IReportService reportService)
+        private static void RunAgents(IEnumerable<Agent> agents)
         {
-            Id = id;
-            _reportService = reportService;
+            foreach (var agent in agents)
+            {
+                Task.Factory.StartNew(agent.Run).ContinueWith(t => ShowError(t, agent.Id));
+            }
         }
 
-        public int Id { get; }
+        private static void ShowError(Task task, int agentId)
+        {
+            if (task.Exception != null)
+            {
+                Console.WriteLine($"Agent {agentId} finished its work with an error.");
+            }
+        }
 
-        public void Run()
+        private static IEnumerable<Agent> PrepareAgents(int count)
+        {
+            var agents = new Agent[count];
+
+            for (var i = 0; i < agents.Length; i++)
+            {
+                var reportService = new ReportService();
+                agents[i] = new Agent(i + 1, reportService);
+            }
+
+            return agents;
+        }
+
+        private static int GetEmulatorsCount()
         {
             while (true)
             {
-                SentReport();
-                //Thread.Sleep(Id * 5000);
-                Thread.Sleep(1000);
+                Console.WriteLine("Please enter a valid amount of emulators:");
+                if (int.TryParse(Console.ReadLine(), out var count) && count > 0)
+                {
+                    return count;
+                }
             }
         }
-
-        private void SentReport()
-        {
-            var report = _reportService.Generate(this);
-
-            Console.WriteLine($"Agent {Id} send report.");
-
-            foreach (var error in report.Errors)
-            {
-                Console.WriteLine(error.Message);
-            }
-        }
-    }
-
-    public interface IReportService
-    {
-        Report Generate(Agent agent);
-    }
-
-    public class ReportService : IReportService
-    {
-        private const int MaxErrorCount = 5;
-
-        private readonly Random _random = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
-
-        public Report Generate(Agent agent)
-        {
-            var count = _random.Next(MaxErrorCount + 1);
-
-            var errors = new Error[count];
-
-            for (var i = 0; i < errors.Length; i++)
-            {
-                errors[i] = new Error($"Error {i} occurred in agent {agent.Id}.");
-            }
-
-            return new Report(errors);
-        }
-    }
-
-    public class Report
-    {
-        public Report(IEnumerable<Error> errors)
-        {
-            Errors = errors;
-        }
-
-        public IEnumerable<Error> Errors { get; }
-    }
-
-    public class Error
-    {
-        public Error(string message)
-        {
-            Message = message;
-        }
-
-        public string Message { get; }
     }
 }
