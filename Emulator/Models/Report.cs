@@ -4,10 +4,13 @@ namespace Emulator.Models
 {
     public class Report
     {
-        public Report(IEnumerable<Error> errors)
+        public Report(int agentId, IEnumerable<Error> errors)
         {
+            AgentId = agentId;
             Errors = errors;
         }
+
+        public int AgentId { get; }
 
         public IEnumerable<Error> Errors { get; }
     }
