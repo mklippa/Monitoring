@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
 using MonitoringService.Models;
+using MonitoringService.Repositories;
 
 namespace MonitoringService.Controllers
 {
@@ -12,12 +11,10 @@ namespace MonitoringService.Controllers
     public class MonitoringController : Controller
     {
         private readonly AgentInfoRepository _agentInfoRepository;
-        private readonly ErrorRepository _errorRepository;
 
         public MonitoringController()
         {
             _agentInfoRepository = new AgentInfoRepository();
-            _errorRepository = new ErrorRepository();
         }
 
         [HttpPost]
@@ -29,18 +26,14 @@ namespace MonitoringService.Controllers
                 var agentInfo = new AgentInfo
                 {
                     AgentId = int.Parse(id),
-                    CreateDate = DateTime.Now
+                    CreateDate = DateTime.Now,
+                    Errors = errors.Select(x => new Error
+                    {
+                        Message = x
+                    }).ToList()
                 };
 
-                var agentInfoId = _agentInfoRepository.Add(agentInfo);
-
-                var errorArray = errors.Select(x => new Error
-                {
-                    AgentInfoId = agentInfoId,
-                    Message = x
-                });
-
-                _errorRepository.Add(errorArray);
+                _agentInfoRepository.Add(agentInfo);
 
                 return StatusCode((int) HttpStatusCode.OK);
             }
@@ -48,22 +41,6 @@ namespace MonitoringService.Controllers
             {
                 return StatusCode((int) HttpStatusCode.InternalServerError);
             };
-        }
-    }
-
-    public class ErrorRepository
-    {
-        public void Add(IEnumerable<Error> errors)
-        {
-
-        }
-    }
-
-    public class AgentInfoRepository
-    {
-        public int Add(AgentInfo item)
-        {
-            return 0;
         }
     }
 
