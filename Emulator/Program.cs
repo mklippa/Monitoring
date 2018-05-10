@@ -27,6 +27,7 @@ namespace Emulator
         {
             foreach (var agent in agents)
             {
+                // todo: use a timer instead
                 Task.Factory.StartNew(agent.Run).ContinueWith(t => ShowError(t, agent.Id));
             }
         }

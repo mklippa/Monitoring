@@ -11,9 +11,7 @@ namespace MonitoringService.Models
 
         public DateTime CreateDate { get; set; }
 
-        public int? ReportId { get; set; }
-
-        public Report Report { get; set; }
+        public DateTime? ReportDate { get; set; }
 
         public List<Error> Errors { get; set; }
     }

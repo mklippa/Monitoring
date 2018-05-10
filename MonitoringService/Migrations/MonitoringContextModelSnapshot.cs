@@ -28,11 +28,9 @@ namespace MonitoringService.Migrations
 
                     b.Property<DateTime>("CreateDate");
 
-                    b.Property<int?>("ReportId");
+                    b.Property<DateTime?>("ReportDate");
 
                     b.HasKey("AgentInfoId");
-
-                    b.HasIndex("ReportId");
 
                     b.ToTable("AgentInfos");
                 });
@@ -51,25 +49,6 @@ namespace MonitoringService.Migrations
                     b.HasIndex("AgentInfoId");
 
                     b.ToTable("Errors");
-                });
-
-            modelBuilder.Entity("MonitoringService.Models.Report", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreateDate");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Reports");
-                });
-
-            modelBuilder.Entity("MonitoringService.Models.AgentInfo", b =>
-                {
-                    b.HasOne("MonitoringService.Models.Report", "Report")
-                        .WithMany()
-                        .HasForeignKey("ReportId");
                 });
 
             modelBuilder.Entity("MonitoringService.Models.Error", b =>

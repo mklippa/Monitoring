@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using MonitoringService.Services;
 
 namespace MonitoringService
 {
@@ -7,7 +8,9 @@ namespace MonitoringService
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            // BuildWebHost(args).Run();
+
+            new ReportService().Report();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

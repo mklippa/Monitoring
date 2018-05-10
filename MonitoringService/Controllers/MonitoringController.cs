@@ -40,16 +40,7 @@ namespace MonitoringService.Controllers
             catch
             {
                 return StatusCode((int) HttpStatusCode.InternalServerError);
-            };
+            }
         }
-    }
-
-    public class AgentItem
-    {
-        public string AgentId { get; set; }
-        public DateTime LastReportDate { get; set; }
-        public bool IsActive { get; set; }
-        public string[] Errors { get; set; }
-        public TimeSpan InactivePeriod { get; set; }
     }
 }

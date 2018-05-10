@@ -7,7 +7,6 @@ namespace MonitoringService
     {
         public DbSet<AgentInfo> AgentInfos { get; set; }
         public DbSet<Error> Errors { get; set; }
-        public DbSet<Report> Reports { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

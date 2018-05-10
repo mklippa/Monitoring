@@ -9,19 +9,6 @@ namespace MonitoringService.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Reports",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreateDate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reports", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AgentInfos",
                 columns: table => new
                 {
@@ -29,17 +16,11 @@ namespace MonitoringService.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     AgentId = table.Column<int>(nullable: false),
                     CreateDate = table.Column<DateTime>(nullable: false),
-                    ReportId = table.Column<int>(nullable: true)
+                    ReportDate = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AgentInfos", x => x.AgentInfoId);
-                    table.ForeignKey(
-                        name: "FK_AgentInfos_Reports_ReportId",
-                        column: x => x.ReportId,
-                        principalTable: "Reports",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,11 +44,6 @@ namespace MonitoringService.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgentInfos_ReportId",
-                table: "AgentInfos",
-                column: "ReportId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Errors_AgentInfoId",
                 table: "Errors",
                 column: "AgentInfoId");
@@ -80,9 +56,6 @@ namespace MonitoringService.Migrations
 
             migrationBuilder.DropTable(
                 name: "AgentInfos");
-
-            migrationBuilder.DropTable(
-                name: "Reports");
         }
     }
 }
