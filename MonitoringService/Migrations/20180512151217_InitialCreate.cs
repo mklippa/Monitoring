@@ -9,10 +9,10 @@ namespace MonitoringService.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AgentInfos",
+                name: "AgentStates",
                 columns: table => new
                 {
-                    AgentInfoId = table.Column<int>(nullable: false)
+                    AgentStateId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     AgentId = table.Column<int>(nullable: false),
                     CreateDate = table.Column<DateTime>(nullable: false),
@@ -20,7 +20,7 @@ namespace MonitoringService.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AgentInfos", x => x.AgentInfoId);
+                    table.PrimaryKey("PK_AgentStates", x => x.AgentStateId);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,24 +29,24 @@ namespace MonitoringService.Migrations
                 {
                     ErrorId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    AgentInfoId = table.Column<int>(nullable: false),
+                    AgentStateId = table.Column<int>(nullable: false),
                     Message = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Errors", x => x.ErrorId);
                     table.ForeignKey(
-                        name: "FK_Errors_AgentInfos_AgentInfoId",
-                        column: x => x.AgentInfoId,
-                        principalTable: "AgentInfos",
-                        principalColumn: "AgentInfoId",
+                        name: "FK_Errors_AgentStates_AgentStateId",
+                        column: x => x.AgentStateId,
+                        principalTable: "AgentStates",
+                        principalColumn: "AgentStateId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Errors_AgentInfoId",
+                name: "IX_Errors_AgentStateId",
                 table: "Errors",
-                column: "AgentInfoId");
+                column: "AgentStateId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -55,7 +55,7 @@ namespace MonitoringService.Migrations
                 name: "Errors");
 
             migrationBuilder.DropTable(
-                name: "AgentInfos");
+                name: "AgentStates");
         }
     }
 }

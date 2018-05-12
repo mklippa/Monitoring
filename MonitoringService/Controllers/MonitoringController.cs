@@ -10,9 +10,9 @@ namespace MonitoringService.Controllers
     {
         private readonly IAgentStateService _agentStateService;
 
-        public MonitoringController()
+        public MonitoringController(IAgentStateService agentStateService)
         {
-            _agentStateService = new AgentStateService(new AgentInfoRepository());
+            _agentStateService = agentStateService;
         }
 
         [HttpPost]

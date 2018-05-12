@@ -47,7 +47,7 @@ namespace Emulator.Services
                 client.BaseAddress = new Uri(_apiBaseUrl);
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(report.Errors.Select(x => x.Message));
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var result = await client.PostAsync($"/api/monitoring/agents/{report.AgentId}/errors", content);
+                var result = await client.PostAsync($"/api/monitoring/agents/{report.AgentId}/states", content);
                 return result.IsSuccessStatusCode;
             }
         }

@@ -11,7 +11,7 @@ using System;
 namespace MonitoringService.Migrations
 {
     [DbContext(typeof(MonitoringContext))]
-    [Migration("20180512083730_InitialCreate")]
+    [Migration("20180512151217_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,9 +20,9 @@ namespace MonitoringService.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.3-rtm-10026");
 
-            modelBuilder.Entity("MonitoringService.Models.AgentInfo", b =>
+            modelBuilder.Entity("MonitoringService.Models.AgentState", b =>
                 {
-                    b.Property<int>("AgentInfoId")
+                    b.Property<int>("AgentStateId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AgentId");
@@ -31,9 +31,9 @@ namespace MonitoringService.Migrations
 
                     b.Property<DateTime?>("ReportDate");
 
-                    b.HasKey("AgentInfoId");
+                    b.HasKey("AgentStateId");
 
-                    b.ToTable("AgentInfos");
+                    b.ToTable("AgentStates");
                 });
 
             modelBuilder.Entity("MonitoringService.Models.Error", b =>
@@ -41,22 +41,22 @@ namespace MonitoringService.Migrations
                     b.Property<int>("ErrorId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AgentInfoId");
+                    b.Property<int>("AgentStateId");
 
                     b.Property<string>("Message");
 
                     b.HasKey("ErrorId");
 
-                    b.HasIndex("AgentInfoId");
+                    b.HasIndex("AgentStateId");
 
                     b.ToTable("Errors");
                 });
 
             modelBuilder.Entity("MonitoringService.Models.Error", b =>
                 {
-                    b.HasOne("MonitoringService.Models.AgentInfo", "AgentInfo")
+                    b.HasOne("MonitoringService.Models.AgentState", "AgentState")
                         .WithMany("Errors")
-                        .HasForeignKey("AgentInfoId")
+                        .HasForeignKey("AgentStateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

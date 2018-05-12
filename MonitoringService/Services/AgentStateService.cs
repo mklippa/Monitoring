@@ -6,13 +6,14 @@ using MonitoringService.Repositories;
 
 namespace MonitoringService.Services
 {
+    // todo: disposable?
     public class AgentStateService : IAgentStateService
     {
-        private readonly IAgentStateRepository _agentStateRepository;
+        private readonly IUnitOfWork _storage;
 
-        public AgentStateService(IAgentStateRepository agentStateRepository)
+        public AgentStateService(IUnitOfWork storage)
         {
-            _agentStateRepository = agentStateRepository;
+            _storage = storage;
         }
 
         public void SaveState(int agentId, IEnumerable<string> errors)
@@ -24,7 +25,7 @@ namespace MonitoringService.Services
                 Errors = errors?.Select(error => new Error {Message = error})
             };
 
-            _agentStateRepository.Add(agentState);
+            _storage.AgentStateRepository.Insert(agentState);
         }
     }
 }
