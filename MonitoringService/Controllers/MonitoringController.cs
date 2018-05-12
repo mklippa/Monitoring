@@ -1,39 +1,32 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using MonitoringService.Models;
 using MonitoringService.Repositories;
+using MonitoringService.Services;
 
 namespace MonitoringService.Controllers
 {
     [Route("api/[controller]")]
     public class MonitoringController : Controller
     {
-        private readonly AgentInfoRepository _agentInfoRepository;
+        private readonly IAgentStateService _agentStateService;
 
         public MonitoringController()
         {
-            _agentInfoRepository = new AgentInfoRepository();
+            _agentStateService = new AgentStateService(new AgentInfoRepository());
         }
 
         [HttpPost]
-        [Route("agents/{id}/errors")]
-        public IActionResult SaveErrors(string id, [FromBody] string[] errors)
+        [Route("agents/{id}/states")]
+        public IActionResult SaveState(string id, [FromBody] string[] errors)
         {
             try
             {
-                var agentInfo = new AgentInfo
+                if (!int.TryParse(id, out var agentId) && agentId < 1)
                 {
-                    AgentId = int.Parse(id),
-                    CreateDate = DateTime.Now,
-                    Errors = errors.Select(x => new Error
-                    {
-                        Message = x
-                    }).ToList()
-                };
+                    return StatusCode((int) HttpStatusCode.BadRequest);
+                }
 
-                _agentInfoRepository.Add(agentInfo);
+                _agentStateService.SaveState(agentId, errors);
 
                 return StatusCode((int) HttpStatusCode.OK);
             }

@@ -4,9 +4,9 @@ using MonitoringService.Models;
 
 namespace MonitoringService.Repositories
 {
-    public class AgentInfoRepository
+    public class AgentInfoRepository : IAgentStateRepository
     {
-        public void Add(AgentInfo item)
+        public void Add(AgentState item)
         {
             using (var db = new MonitoringContext())
             {
@@ -15,7 +15,7 @@ namespace MonitoringService.Repositories
             }
         }
 
-        public IEnumerable<AgentInfo> GetAll()
+        public IEnumerable<AgentState> GetAll()
         {
             using (var db = new MonitoringContext())
             {
@@ -23,7 +23,7 @@ namespace MonitoringService.Repositories
             }
         }
 
-        public void Update(IEnumerable<AgentInfo> reportedAgentInfos)
+        public void Update(IEnumerable<AgentState> reportedAgentInfos)
         {
             using (var db = new MonitoringContext())
             {
@@ -39,5 +39,10 @@ namespace MonitoringService.Repositories
                 db.SaveChanges();
             }
         }
+    }
+
+    public interface IAgentStateRepository
+    {
+        void Add(AgentState item);
     }
 }

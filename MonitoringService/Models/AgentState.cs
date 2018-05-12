@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace MonitoringService.Models
 {
-    public class AgentInfo
+    public class AgentState
     {
-        public int AgentInfoId { get; set; }
+        public int AgentStateId { get; set; }
 
         public int AgentId { get; set; }
 
@@ -13,6 +13,6 @@ namespace MonitoringService.Models
 
         public DateTime? ReportDate { get; set; }
 
-        public List<Error> Errors { get; set; }
+        public IEnumerable<Error> Errors { get; set; }
     }
 }

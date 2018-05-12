@@ -6,8 +6,8 @@
 
         public string Message { get; set; }
 
-        public int AgentInfoId { get; set; }
+        public int AgentStateId { get; set; }
 
-        public AgentInfo AgentInfo { get; set; }
+        public AgentState AgentState { get; set; }
     }
 }
