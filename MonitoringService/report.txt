@@ -1,4 +1,0 @@
-Indentificator: 1
-Lasr Report Date: 5/12/2018 3:55:23 PM
-Is Active: False
-Inctive Period: 1356.418

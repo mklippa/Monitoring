@@ -3,3 +3,5 @@ obj
 .idea
 .suo
 *.DotSettings.user
+monitoring.db
+Reports

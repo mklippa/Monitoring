@@ -35,7 +35,8 @@ namespace MonitoringService.Services
 
             var agentAggregatedStates = _aggregationService.Aggregate(now);
 
-            File.WriteAllLines($"{now:s}.txt", agentAggregatedStates.Select(s => s.ToString()));
+            // todo: move reports dir to config
+            File.WriteAllLines($"Reports/{now:yyyyMMddhhmmss}.txt", agentAggregatedStates.Select(s => s.ToString()));
         }
     }
 

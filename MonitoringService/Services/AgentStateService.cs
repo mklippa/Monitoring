@@ -22,10 +22,11 @@ namespace MonitoringService.Services
             {
                 AgentId = agentId,
                 CreateDate = DateTime.Now,
-                Errors = errors?.Select(error => new Error {Message = error})
+                Errors = errors?.Select(error => new Error {Message = error}).ToArray()
             };
 
             _storage.AgentStateRepository.Insert(agentState);
+            _storage.Save();
         }
     }
 }

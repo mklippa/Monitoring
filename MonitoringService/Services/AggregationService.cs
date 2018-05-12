@@ -35,13 +35,14 @@ namespace MonitoringService.Services
                 yield return Aggregate(item.AgentId, item.States, now);
             }
 
-            MarkAsAggregated(unaggregatedAgentStates);
+            MarkAsAggregated(unaggregatedAgentStates, now);
         }
 
-        private void MarkAsAggregated(IEnumerable<AgentState> unaggregatedAgentStates)
+        private void MarkAsAggregated(IEnumerable<AgentState> unaggregatedAgentStates, DateTime now)
         {
             foreach (var agentState in unaggregatedAgentStates)
             {
+                agentState.ReportDate = now;
                 _storage.AgentStateRepository.Update(agentState);
             }
 

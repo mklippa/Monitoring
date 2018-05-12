@@ -13,6 +13,6 @@ namespace MonitoringService.Models
 
         public DateTime? ReportDate { get; set; }
 
-        public IEnumerable<Error> Errors { get; set; }
+        public ICollection<Error> Errors { get; set; }
     }
 }
