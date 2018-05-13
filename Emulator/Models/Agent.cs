@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Emulator.Services;
 
@@ -18,6 +19,8 @@ namespace Emulator.Models
 
         public async Task RunAsync()
         {
+            var delay = EmulatorSettings.Instance.DispatchPeriod * Id;
+
             while (true)
             {
                 var now = DateTime.Now;
@@ -26,7 +29,7 @@ namespace Emulator.Models
 
                 Console.WriteLine($"{now:G}: The state of the agent {Id} was sent: {result}");
 
-                await Task.Delay(EmulatorSettings.Instance.DispatchPeriod * Id);
+                await Task.Delay(delay);
             }
         }
 
