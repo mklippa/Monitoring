@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Emulator.Services;
 
 namespace Emulator.Models
@@ -20,7 +19,6 @@ namespace Emulator.Models
         {
             while (true)
             {
-                Console.WriteLine($"{Id}: send report");
                 SendReport();
                 await Task.Delay(EmulatorSettings.Instance.DispatchPeriod * Id);
             }

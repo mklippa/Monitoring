@@ -18,9 +18,7 @@ namespace MonitoringService
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // optionsBuilder.UseSqlite(_connectionString);
-
-            optionsBuilder.UseSqlServer(_connectionString);
+            optionsBuilder.UseSqlite(_connectionString);
 
             base.OnConfiguring(optionsBuilder);
         }

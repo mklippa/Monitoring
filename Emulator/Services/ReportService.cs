@@ -35,8 +35,16 @@ namespace Emulator.Services
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(report.Errors.Select(x => x.Message));
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var requestUri = string.Format(EmulatorSettings.Instance.RequestUrl, report.AgentId);
-                var result = await client.PostAsync(requestUri, content);
-                return result.IsSuccessStatusCode;
+                try
+                {
+                    var result = await client.PostAsync(requestUri, content);
+                    return result.IsSuccessStatusCode;
+                }
+                catch (HttpRequestException)
+                {
+                    Console.WriteLine($"{DateTime.Now:G}: Server is not available.");
+                    return false;
+                }
             }
         }
     }
