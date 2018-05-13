@@ -14,9 +14,7 @@ namespace Emulator
 
             var agents = PrepareAgents(count);
 
-            Console.WriteLine("Please press Enter to continue, press Enter again to exit.");
-
-            Console.ReadLine();
+            Console.WriteLine("Please press Enter to exit.");
 
             RunAgents(agents);
 
@@ -27,8 +25,7 @@ namespace Emulator
         {
             foreach (var agent in agents)
             {
-                // todo: use a timer instead
-                Task.Factory.StartNew(agent.Run).ContinueWith(t => ShowError(t, agent.Id));
+                agent.RunAsync().ContinueWith(t => ShowError(t, agent.Id));
             }
         }
 
