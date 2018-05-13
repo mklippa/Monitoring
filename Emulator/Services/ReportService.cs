@@ -13,22 +13,9 @@ namespace Emulator.Services
     {
         private readonly Random _random = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
 
-        private readonly int _errorsLimit;
-
-        private readonly string _apiBaseUrl;
-
-        public ReportService()
-        {
-            // todo: write a configuration manager
-            var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json").Build();
-            _apiBaseUrl = config["ApiBaseUrl"];
-            _errorsLimit = int.Parse(config["ErrorsLimit"]);
-        }
-
         public Report Generate(Agent agent)
         {
-            var count = _random.Next(_errorsLimit + 1);
+            var count = _random.Next(EmulatorSettings.Instance.ErrorsLimit + 1);
 
             var errors = new Error[count];
 
@@ -44,10 +31,11 @@ namespace Emulator.Services
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.BaseAddress = new Uri(EmulatorSettings.Instance.ApiBaseUrl);
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(report.Errors.Select(x => x.Message));
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var result = await client.PostAsync($"/api/monitoring/agents/{report.AgentId}/states", content);
+                var requestUri = string.Format(EmulatorSettings.Instance.RequestUrl, report.AgentId);
+                var result = await client.PostAsync(requestUri, content);
                 return result.IsSuccessStatusCode;
             }
         }

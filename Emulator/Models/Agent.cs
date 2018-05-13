@@ -1,13 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Emulator.Services;
 
 namespace Emulator.Models
 {
     public class Agent
     {
-        // todo: move to config manager
-        private int DelayPeriod => Id * 5000;
-
         private readonly IReportService _reportService;
 
         public Agent(int id, IReportService reportService)
@@ -22,8 +20,9 @@ namespace Emulator.Models
         {
             while (true)
             {
+                Console.WriteLine($"{Id}: send report");
                 SendReport();
-                await Task.Delay(DelayPeriod);
+                await Task.Delay(EmulatorSettings.Instance.DispatchPeriod * Id);
             }
         }
 
