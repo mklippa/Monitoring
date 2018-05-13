@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using Microsoft.Extensions.Configuration;
 using MonitoringService.Models;
 using MonitoringService.Models.Entities;
 using MonitoringService.Repositories;
@@ -10,14 +10,12 @@ namespace MonitoringService.Services
 {
     public class AggregationService : IAggregationService
     {
+        private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _storage;
 
-        // todo: move to config
-        // length of an active period in seconds
-        private const int ActivePeriod = 30;
-
-        public AggregationService(IUnitOfWork storage)
+        public AggregationService(IConfiguration configuration, IUnitOfWork storage)
         {
+            _configuration = configuration;
             _storage = storage;
         }
 
@@ -59,7 +57,7 @@ namespace MonitoringService.Services
             {
                 AgentId = agentId,
                 LastReportDate = GetLastReportDate(agentId),
-                IsActive = inactivePeriod.TotalSeconds <= ActivePeriod
+                IsActive = inactivePeriod.TotalMilliseconds <= int.Parse(_configuration["AgentActivePeriod"])
             };
 
 

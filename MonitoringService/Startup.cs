@@ -29,6 +29,7 @@ namespace MonitoringService
             services.AddMvc();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAgentStateService, AgentStateService>();
+            services.AddScoped<IAggregationService, AggregationService>();
             services.AddSingleton<IHostedService, ReportManagerService>();
         }
 

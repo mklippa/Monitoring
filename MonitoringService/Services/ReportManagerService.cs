@@ -4,16 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using MonitoringService.Models;
 
 namespace MonitoringService.Services
 {
     public class ReportManagerService : BackgroundService
     {
+        private readonly IConfiguration _configuration;
         private readonly IAggregationService _aggregationService;
 
-        public ReportManagerService(IAggregationService aggregationService)
+        public ReportManagerService(IConfiguration configuration, IAggregationService aggregationService)
         {
+            _configuration = configuration;
             _aggregationService = aggregationService;
         }
 
@@ -23,8 +26,7 @@ namespace MonitoringService.Services
             {
                 Report();
 
-                // todo: move reports dir to config
-                await Task.Delay(10000, stoppingToken);
+                await Task.Delay(int.Parse(_configuration["ReportDelay"]), stoppingToken);
             }
         }
 
@@ -37,10 +39,9 @@ namespace MonitoringService.Services
             Print(agentAggregatedStates, now);
         }
 
-        private static void Print(IEnumerable<AgentAggregatedState> agentAggregatedStates, DateTime now)
+        private void Print(IEnumerable<AgentAggregatedState> agentAggregatedStates, DateTime now)
         {
-            // todo: move reports dir to config
-            const string dir = "Reports";
+            var dir = _configuration["ReportsDirectory"];
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);

@@ -6,16 +6,21 @@ namespace MonitoringService
 {
     public class MonitoringContext : DbContext
     {
+        private readonly string _connectionString;
+
         public DbSet<AgentState> AgentStates { get; set; }
         public DbSet<Error> Errors { get; set; }
 
+        public MonitoringContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // todo: move connection string to config
-            // optionsBuilder.UseSqlite("Data Source=monitoring.db");
+            // optionsBuilder.UseSqlite(_connectionString);
 
-            optionsBuilder.UseSqlServer(
-                "Data Source=WS-NSK-02;Initial Catalog=monitoring;Persist Security Info=True;User ID=policyone;Password=policyone");
+            optionsBuilder.UseSqlServer(_connectionString);
 
             base.OnConfiguring(optionsBuilder);
         }
