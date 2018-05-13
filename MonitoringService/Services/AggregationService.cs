@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using MonitoringService.Models;
+using MonitoringService.Models.Entities;
 using MonitoringService.Repositories;
 
 namespace MonitoringService.Services
@@ -80,19 +82,25 @@ namespace MonitoringService.Services
 
         private DateTime GetLastAgentStateSaveDate(int agentId)
         {
-            // todo: check via profile
-            return _storage.AgentStateRepository.GetLastAgentStateSaveDate(agentId);
+            var date = _storage.AgentStateRepository.GetLastAgentStateSaveDate(agentId);
+
+            if (!date.HasValue)
+            {
+                throw new ArgumentException($"There are no any saved states for the agent with id = {agentId}.");
+            }
+
+            return date.Value;
         }
 
         private DateTime? GetLastReportDate(int agentId)
         {
-            // todo: check via profile
             return _storage.AgentStateRepository.GetLastReportDate(agentId);
         }
 
         private IEnumerable<AgentState> GetUnreportedAgentStates()
         {
-            return _storage.AgentStateRepository.Get(s => !s.ReportDate.HasValue);
+            return _storage.AgentStateRepository.Get(s => !s.ReportDate.HasValue,
+                includeProperties: MonitoringContext.ErrorsProperty);
         }
     }
 }

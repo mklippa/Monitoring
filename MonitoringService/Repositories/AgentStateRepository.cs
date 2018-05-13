@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using MonitoringService.Models;
+using MonitoringService.Models.Entities;
 
 namespace MonitoringService.Repositories
 {
@@ -19,10 +20,10 @@ namespace MonitoringService.Repositories
                 .OrderBy(s => s.ReportDate).LastOrDefault()?.ReportDate;
         }
 
-        public DateTime GetLastAgentStateSaveDate(int agentId)
+        public DateTime? GetLastAgentStateSaveDate(int agentId)
         {
             return _context.AgentStates.Where(s => s.AgentId == agentId).OrderBy(s => s.CreateDate).LastOrDefault()
-                .CreateDate;
+                ?.CreateDate;
         }
     }
 }

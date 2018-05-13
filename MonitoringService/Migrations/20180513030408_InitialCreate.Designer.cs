@@ -11,16 +11,17 @@ using System;
 namespace MonitoringService.Migrations
 {
     [DbContext(typeof(MonitoringContext))]
-    [Migration("20180512151217_InitialCreate")]
+    [Migration("20180513030408_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.3-rtm-10026");
+                .HasAnnotation("ProductVersion", "2.0.3-rtm-10026")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("MonitoringService.Models.AgentState", b =>
+            modelBuilder.Entity("MonitoringService.Models.Entities.AgentState", b =>
                 {
                     b.Property<int>("AgentStateId")
                         .ValueGeneratedOnAdd();
@@ -36,7 +37,7 @@ namespace MonitoringService.Migrations
                     b.ToTable("AgentStates");
                 });
 
-            modelBuilder.Entity("MonitoringService.Models.Error", b =>
+            modelBuilder.Entity("MonitoringService.Models.Entities.Error", b =>
                 {
                     b.Property<int>("ErrorId")
                         .ValueGeneratedOnAdd();
@@ -52,9 +53,9 @@ namespace MonitoringService.Migrations
                     b.ToTable("Errors");
                 });
 
-            modelBuilder.Entity("MonitoringService.Models.Error", b =>
+            modelBuilder.Entity("MonitoringService.Models.Entities.Error", b =>
                 {
-                    b.HasOne("MonitoringService.Models.AgentState", "AgentState")
+                    b.HasOne("MonitoringService.Models.Entities.AgentState", "AgentState")
                         .WithMany("Errors")
                         .HasForeignKey("AgentStateId")
                         .OnDelete(DeleteBehavior.Cascade);

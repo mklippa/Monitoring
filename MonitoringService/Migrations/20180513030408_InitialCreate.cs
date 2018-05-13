@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +14,7 @@ namespace MonitoringService.Migrations
                 columns: table => new
                 {
                     AgentStateId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AgentId = table.Column<int>(nullable: false),
                     CreateDate = table.Column<DateTime>(nullable: false),
                     ReportDate = table.Column<DateTime>(nullable: true)
@@ -28,7 +29,7 @@ namespace MonitoringService.Migrations
                 columns: table => new
                 {
                     ErrorId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AgentStateId = table.Column<int>(nullable: false),
                     Message = table.Column<string>(nullable: true)
                 },
