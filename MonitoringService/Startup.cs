@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MonitoringService.Repositories;
 using MonitoringService.Services;
+using StructureMap;
+using StructureMap.Pipeline;
 
 namespace MonitoringService
 {
@@ -19,14 +22,20 @@ namespace MonitoringService
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IAgentStateService, AgentStateService>();
-            services.AddScoped<IAggregationService, AggregationService>();
-            services.AddSingleton<IHostedService, ReportManagerService>();
             services.AddDbContext<MonitoringContext>(options => options.UseSqlite(Configuration["ConnectionString"]));
+
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.AddRegistry(new StructuremapRegistry());
+                config.Populate(services);
+            });
+
+            return container.GetInstance<IServiceProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +47,17 @@ namespace MonitoringService
             }
 
             app.UseMvc();
+        }
+    }
+
+    public class StructuremapRegistry : Registry
+    {
+        public StructuremapRegistry()
+        {
+            For<IUnitOfWork>().Use<UnitOfWork>();
+            For<IAgentStateService>().Use<AgentStateService>();
+            For<IAggregationService>().Use<AggregationService>();
+            For<IHostedService>().LifecycleIs(Lifecycles.Singleton).Use<ReportManagerService>();
         }
     }
 }

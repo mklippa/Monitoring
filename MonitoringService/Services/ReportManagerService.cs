@@ -43,9 +43,9 @@ namespace MonitoringService.Services
             // a service provider is used because the current service is a singleton
             using (var scope = _serviceProvider.CreateScope())
             {
-                var now = DateTime.Now;
-
                 var aggregationService = scope.ServiceProvider.GetRequiredService<IAggregationService>();
+
+                var now = DateTime.Now;
 
                 var agentAggregatedStates = aggregationService.Aggregate(now);
 
