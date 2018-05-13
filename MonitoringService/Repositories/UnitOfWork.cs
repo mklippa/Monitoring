@@ -10,9 +10,9 @@ namespace MonitoringService.Repositories
         private readonly MonitoringContext _context;
         private AgentStateRepository _agentStateRepository;
 
-        public UnitOfWork(IConfiguration configuration)
+        public UnitOfWork(MonitoringContext context)
         {
-            _context = new MonitoringContext(configuration["ConnectionString"]);
+            _context = context;
         }
 
         public AgentStateRepository AgentStateRepository =>

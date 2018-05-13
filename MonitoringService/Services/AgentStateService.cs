@@ -7,7 +7,6 @@ using MonitoringService.Repositories;
 
 namespace MonitoringService.Services
 {
-    // todo: disposable?
     public class AgentStateService : IAgentStateService
     {
         private readonly IUnitOfWork _storage;
