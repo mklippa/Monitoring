@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using MonitoringService.Services;
 
 namespace MonitoringService
 {

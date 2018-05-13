@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Emulator.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace Emulator.Services
 {
@@ -42,7 +40,7 @@ namespace Emulator.Services
                 }
                 catch (HttpRequestException)
                 {
-                    Console.WriteLine($"{DateTime.Now:G}: Server is not available.");
+                    Console.WriteLine("Server is not available.");
                     return false;
                 }
             }

@@ -61,8 +61,10 @@ namespace MonitoringService.Services
                 Directory.CreateDirectory(dir);
             }
 
-            File.WriteAllLines($"{dir}/{now:yyyyMMddhhmmss}.txt",
-                agentAggregatedStates.OrderBy(s => s.AgentId).Select(s => s.ToString()));
+            var filename = $"{dir}/{now:yyyyMMddhhmmss}.txt";
+            File.WriteAllLines(filename, agentAggregatedStates.OrderBy(s => s.AgentId).Select(s => s.ToString()));
+
+            Console.WriteLine($"{filename} was created.");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Emulator.Services;
 
 namespace Emulator.Models
@@ -19,16 +20,21 @@ namespace Emulator.Models
         {
             while (true)
             {
-                SendReport();
+                var now = DateTime.Now;
+
+                var result = await SendReportAsync();
+
+                Console.WriteLine($"{now:G}: The state of the agent {Id} was sent: {result}");
+
                 await Task.Delay(EmulatorSettings.Instance.DispatchPeriod * Id);
             }
         }
 
-        private void SendReport()
+        private async Task<bool> SendReportAsync()
         {
             var report = _reportService.Generate(this);
 
-            _reportService.SendReportAsync(report);
+            return await _reportService.SendReportAsync(report);
         }
     }
 }
