@@ -2,34 +2,33 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using MonitoringService.Models;
-using MonitoringService.Repositories;
 
 namespace MonitoringService.Services
 {
-    public class ReportService : BackgroundService
+    public class ReportManagerService : BackgroundService
     {
         private readonly IAggregationService _aggregationService;
 
-        public ReportService()
+        public ReportManagerService(IAggregationService aggregationService)
         {
-            _aggregationService = new AggregationService(new UnitOfWork());
+            _aggregationService = aggregationService;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (true)
+            while (!stoppingToken.IsCancellationRequested)
             {
-                Thread.Sleep(5000);
-
                 Report();
+
+                // todo: move reports dir to config
+                await Task.Delay(10000, stoppingToken);
             }
         }
 
-        public void Report()
+        private void Report()
         {
             var now = DateTime.Now;
 

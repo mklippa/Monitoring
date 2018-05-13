@@ -8,9 +8,7 @@ namespace MonitoringService
     {
         public static void Main(string[] args)
         {
-//            BuildWebHost(args).Run();
-
-            new ReportService().Report();
+            BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

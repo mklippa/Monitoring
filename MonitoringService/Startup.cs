@@ -29,6 +29,7 @@ namespace MonitoringService
             services.AddMvc();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAgentStateService, AgentStateService>();
+            services.AddSingleton<IHostedService, ReportManagerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

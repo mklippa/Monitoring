@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 
+// more info: https://goo.gl/3oM6av
 namespace MonitoringService.Services
 {
     // Copyright (c) .NET Foundation. Licensed under the Apache License, Version 2.0.
