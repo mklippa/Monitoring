@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using MonitoringService.Models;
 using MonitoringService.Models.Entities;
 
 namespace MonitoringService.Repositories
@@ -24,6 +24,11 @@ namespace MonitoringService.Repositories
         {
             return _context.AgentStates.Where(s => s.AgentId == agentId).OrderBy(s => s.CreateDate).LastOrDefault()
                 ?.CreateDate;
+        }
+
+        public IEnumerable<int> GetAgentIds()
+        {
+            return _context.AgentStates.Select(s => s.AgentId).Distinct().ToList();
         }
     }
 }

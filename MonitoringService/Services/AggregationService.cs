@@ -28,7 +28,17 @@ namespace MonitoringService.Services
                 {
                     AgentId = x.Key,
                     States = x.Select(i => i)
-                });
+                }).ToList();
+
+            var restAgents = _storage.AgentStateRepository.GetAgentIds()
+                .Except(groupedStates.Select(x => x.AgentId))
+                .Select(x => new
+                {
+                    AgentId = x,
+                    States = Enumerable.Empty<AgentState>()
+                }).ToList();
+
+            groupedStates.AddRange(restAgents);
 
             foreach (var item in groupedStates)
             {
