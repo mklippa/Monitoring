@@ -48,6 +48,19 @@ namespace MonitoringService
             }
 
             app.UseMvc();
+
+            ApplyDbMigrations(app.ApplicationServices);
+        }
+
+        private static void ApplyDbMigrations(IServiceProvider applicationServices)
+        {
+            using (var serviceScope = applicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                using (var db = serviceScope.ServiceProvider.GetService<MonitoringContext>())
+                {
+                    db.Database.Migrate();
+                }
+            }
         }
     }
 
