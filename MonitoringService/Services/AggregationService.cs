@@ -21,7 +21,7 @@ namespace MonitoringService.Services
 
         public IEnumerable<AgentAggregatedState> Aggregate(DateTime now)
         {
-            var unaggregatedAgentStates = GetUnreportedAgentStates().ToArray();
+            var unaggregatedAgentStates = GetUnreportedAgentStates().ToList();
 
             var groupedStates = unaggregatedAgentStates.GroupBy(x => x.AgentId)
                 .Select(x => new
@@ -41,8 +41,15 @@ namespace MonitoringService.Services
             groupedStates.AddRange(restAgents);
 
             foreach (var item in groupedStates)
-            {
-                yield return Aggregate(item.AgentId, item.States, now);
+            { 
+                var agregatedState = Aggregate(item.AgentId, item.States, now);
+
+                if (!agregatedState.IsActive)
+                {
+                    unaggregatedAgentStates.RemoveAll(x => x.AgentId == agregatedState.AgentId);
+                }
+
+                yield return agregatedState;
             }
 
             MarkAsAggregated(unaggregatedAgentStates, now);
@@ -61,19 +68,25 @@ namespace MonitoringService.Services
 
         private AgentAggregatedState Aggregate(int agentId, IEnumerable<AgentState> agentStates, DateTime now)
         {
-            var inactivePeriod = now - GetLastAgentStateSaveDate(agentId);
+            var agentStateArray = agentStates.ToArray();
+
+            var lastAgentState = agentStateArray.Any()
+                ? agentStateArray.OrderBy(x => x.CreateDate).Last().CreateDate
+                : GetLastAgentStateSaveDate(agentId);
+
+            var inactivePeriod = now - lastAgentState;
 
             var aggregatedState = new AgentAggregatedState
             {
                 AgentId = agentId,
-                LastReportDate = GetLastReportDate(agentId),
+                LastReportDate = lastAgentState,
                 IsActive = inactivePeriod.TotalMilliseconds <= _settings.Value.AgentActivePeriod
             };
 
 
             if (aggregatedState.IsActive)
             {
-                aggregatedState.Errors = GetAggregatedStateErrors(agentStates);
+                aggregatedState.Errors = GetAggregatedStateErrors(agentStateArray);
             }
             else
             {
@@ -98,11 +111,6 @@ namespace MonitoringService.Services
             }
 
             return date.Value;
-        }
-
-        private DateTime? GetLastReportDate(int agentId)
-        {
-            return _storage.AgentStateRepository.GetLastReportDate(agentId);
         }
 
         private IEnumerable<AgentState> GetUnreportedAgentStates()
