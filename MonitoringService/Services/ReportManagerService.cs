@@ -4,21 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MonitoringService.Models;
 
 namespace MonitoringService.Services
 {
     public class ReportManagerService : BackgroundService
     {
-        private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IOptions<MonitoringSettings> _settings;
 
-        public ReportManagerService(IConfiguration configuration, IServiceProvider serviceProvider)
+        public ReportManagerService(IServiceProvider serviceProvider, IOptions<MonitoringSettings> settings)
         {
-            _configuration = configuration;
             _serviceProvider = serviceProvider;
+            _settings = settings;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,7 +34,7 @@ namespace MonitoringService.Services
                     Console.WriteLine(e);
                 }
 
-                await Task.Delay(int.Parse(_configuration["ReportDelay"]), stoppingToken);
+                await Task.Delay(_settings.Value.ReportDelay, stoppingToken);
             }
         }
 
@@ -55,13 +55,12 @@ namespace MonitoringService.Services
 
         private void Print(IEnumerable<AgentAggregatedState> agentAggregatedStates, DateTime now)
         {
-            var dir = _configuration["ReportsDirectory"];
-            if (!Directory.Exists(dir))
+            if (!Directory.Exists(_settings.Value.ReportsDirectory))
             {
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(_settings.Value.ReportsDirectory);
             }
 
-            var filename = $"{dir}/{now:yyyyMMddhhmmss}.txt";
+            var filename = $"{_settings.Value.ReportsDirectory}/{now:yyyyMMddhhmmss}.txt";
             File.WriteAllLines(filename, agentAggregatedStates.OrderBy(s => s.AgentId).Select(s => s.ToString()));
 
             Console.WriteLine($"{filename} was created.");

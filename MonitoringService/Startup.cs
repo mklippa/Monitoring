@@ -26,6 +26,7 @@ namespace MonitoringService
         {
             services.AddMvc();
             services.AddDbContext<MonitoringContext>(options => options.UseSqlite(Configuration["ConnectionString"]));
+            services.Configure<MonitoringSettings>(Configuration);
 
             var container = new Container();
 

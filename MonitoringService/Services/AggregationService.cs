@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MonitoringService.Models;
 using MonitoringService.Models.Entities;
 using MonitoringService.Repositories;
@@ -10,13 +10,13 @@ namespace MonitoringService.Services
 {
     public class AggregationService : IAggregationService
     {
-        private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _storage;
+        private readonly IOptions<MonitoringSettings> _settings;
 
-        public AggregationService(IConfiguration configuration, IUnitOfWork storage)
+        public AggregationService(IUnitOfWork storage, IOptions<MonitoringSettings> settings)
         {
-            _configuration = configuration;
             _storage = storage;
+            _settings = settings;
         }
 
         public IEnumerable<AgentAggregatedState> Aggregate(DateTime now)
@@ -57,7 +57,7 @@ namespace MonitoringService.Services
             {
                 AgentId = agentId,
                 LastReportDate = GetLastReportDate(agentId),
-                IsActive = inactivePeriod.TotalMilliseconds <= int.Parse(_configuration["AgentActivePeriod"])
+                IsActive = inactivePeriod.TotalMilliseconds <= _settings.Value.AgentActivePeriod
             };
 
 
