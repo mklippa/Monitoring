@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Emulator.Models;
 using Emulator.Services;
@@ -41,9 +42,11 @@ namespace Emulator
         {
             var agents = new Agent[count];
 
+            var httpClient = new HttpClient {BaseAddress = new Uri(EmulatorSettings.Instance.ApiBaseUrl)};
+
             for (var i = 0; i < agents.Length; i++)
             {
-                var reportService = new ReportService();
+                var reportService = new ReportService(httpClient);
                 agents[i] = new Agent(i + 1, reportService);
             }
 
