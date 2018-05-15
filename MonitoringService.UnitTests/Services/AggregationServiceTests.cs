@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Options;
@@ -232,6 +233,152 @@ namespace MonitoringService.UnitTests.Services
 
             // Assert
             CollectionAssert.AreEqual(errors1.Union(errors2).Select(x => x.Message), actualResult);
+        }
+
+        [Test]
+        public void Should_UpdateAgentStateReportDate_When_AgentStateWasAggregatedAndAggregatedStateWasProcessed()
+        {
+            // Arrange
+            const int agentId = 1;
+
+            var createDate = Now - TimeSpan.FromMilliseconds(MonitoringSettings.AgentActivePeriod - 1000);
+
+            var agentStateCreateDates = new[]
+            {
+                new AgentStateCreateDate
+                {
+                    AgentId = agentId,
+                    CreateDate = createDate
+                },
+            };
+
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+                .Returns(agentStateCreateDates);
+
+            var errors1 = new[]
+            {
+                new Error {Message = "error11"},
+                new Error {Message = "error12"},
+            };
+
+            var agentState1 = new AgentState
+            {
+                AgentId = agentId,
+                CreateDate = createDate,
+                Errors = errors1
+            };
+
+            _unitOfWork.Setup(x => x.AgentStateRepository.Get(It.IsAny<Expression<Func<AgentState, bool>>>(), null,
+                MonitoringContext.ErrorsProperty)).Returns(new[] {agentState1});
+
+            // Act
+            var result = _aggregationService.Aggregate(Now).ToArray();
+
+            // Assert
+            Assert.AreEqual(Now, agentState1.ReportDate);
+        }
+
+        [Test]
+        public void Should_NotUpdateAgentStateReportDate_When_AgentStateWasAggregatedButAggregatedStateWasNotProcessed()
+        {
+            // Arrange
+            const int agentId = 1;
+
+            var createDate = Now - TimeSpan.FromMilliseconds(MonitoringSettings.AgentActivePeriod - 1000);
+
+            var agentStateCreateDates = new[]
+            {
+                new AgentStateCreateDate
+                {
+                    AgentId = agentId,
+                    CreateDate = createDate
+                },
+            };
+
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+                .Returns(agentStateCreateDates);
+
+            var errors1 = new[]
+            {
+                new Error {Message = "error11"},
+                new Error {Message = "error12"},
+            };
+
+            var agentState1 = new AgentState
+            {
+                AgentId = agentId,
+                CreateDate = createDate,
+                Errors = errors1
+            };
+
+            _unitOfWork.Setup(x => x.AgentStateRepository.Get(It.IsAny<Expression<Func<AgentState, bool>>>(), null,
+                MonitoringContext.ErrorsProperty)).Returns(new[] {agentState1});
+
+            // Act
+            var result = _aggregationService.Aggregate(Now);
+
+            // Assert
+            Assert.IsNull(agentState1.ReportDate);
+        }
+
+        [Test]
+        public void Should_SaveUpdatedAgentStateReportDate_When_AgentStateWasAggregatedAndAggregatedStateWasProcessed()
+        {
+            // Arrange
+            const int agentId = 1;
+
+            var createDate = Now - TimeSpan.FromMilliseconds(MonitoringSettings.AgentActivePeriod - 1000);
+
+            var agentStateCreateDates = new[]
+            {
+                new AgentStateCreateDate
+                {
+                    AgentId = agentId,
+                    CreateDate = createDate
+                },
+            };
+
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+                .Returns(agentStateCreateDates);
+
+            var errors1 = new[]
+            {
+                new Error {Message = "error11"},
+                new Error {Message = "error12"},
+            };
+
+            var agentState1 = new AgentState
+            {
+                AgentId = agentId,
+                CreateDate = createDate,
+                Errors = errors1
+            };
+
+            var errors2 = new[]
+            {
+                new Error {Message = "error21"},
+                new Error {Message = "error22"},
+            };
+
+            var agentState2 = new AgentState
+            {
+                AgentId = agentId,
+                CreateDate = createDate,
+                Errors = errors2
+            };
+
+            _unitOfWork.Setup(x => x.AgentStateRepository.Get(It.IsAny<Expression<Func<AgentState, bool>>>(), null,
+                MonitoringContext.ErrorsProperty)).Returns(new[] {agentState1, agentState2});
+
+            var actualAgentStates = new List<AgentState>();
+            _unitOfWork.Setup(x => x.AgentStateRepository.Update(It.IsAny<AgentState>()))
+                .Callback<AgentState>(state => actualAgentStates.Add(state));
+
+            // Act
+            var result = _aggregationService.Aggregate(Now).ToArray();
+
+            // Assert
+            CollectionAssert.AreEqual(new[] {agentState1, agentState2}, actualAgentStates);
         }
     }
 }
