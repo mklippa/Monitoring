@@ -42,9 +42,9 @@ namespace MonitoringService.UnitTests.Services
             // Arrange
             const int expectedResult = 1;
 
-            var agentStateCreateDates = new []
+            var agentStateCreateDates = new[]
             {
-                new AgentStateCreateDate{AgentId = expectedResult},
+                new AgentStateCreateDate {AgentId = expectedResult},
             };
 
             _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
@@ -63,9 +63,9 @@ namespace MonitoringService.UnitTests.Services
             // Arrange
             var expectedResult = new DateTime(2018, 5, 15);
 
-            var agentStateCreateDates = new []
+            var agentStateCreateDates = new[]
             {
-                new AgentStateCreateDate{CreateDate = expectedResult},
+                new AgentStateCreateDate {CreateDate = expectedResult},
             };
 
             _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
@@ -84,9 +84,9 @@ namespace MonitoringService.UnitTests.Services
             // Arrange
             var createDate = Now - TimeSpan.FromMilliseconds(MonitoringSettings.AgentActivePeriod - 1000);
 
-            var agentStateCreateDates = new []
+            var agentStateCreateDates = new[]
             {
-                new AgentStateCreateDate{CreateDate = createDate},
+                new AgentStateCreateDate {CreateDate = createDate},
             };
 
             _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
@@ -105,9 +105,9 @@ namespace MonitoringService.UnitTests.Services
             // Arrange
             var createDate = Now - TimeSpan.FromMilliseconds(MonitoringSettings.AgentActivePeriod + 1000);
 
-            var agentStateCreateDates = new []
+            var agentStateCreateDates = new[]
             {
-                new AgentStateCreateDate{CreateDate = createDate},
+                new AgentStateCreateDate {CreateDate = createDate},
             };
 
             _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
@@ -128,9 +128,9 @@ namespace MonitoringService.UnitTests.Services
 
             var createDate = Now - expectedResult;
 
-            var agentStateCreateDates = new []
+            var agentStateCreateDates = new[]
             {
-                new AgentStateCreateDate{CreateDate = createDate},
+                new AgentStateCreateDate {CreateDate = createDate},
             };
 
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -151,14 +151,14 @@ namespace MonitoringService.UnitTests.Services
         }
 
         [Test]
-        public void Should_SetErrors_When_AgentIsActive()
+        public void Should_SetNotReportedErrorsForSpecificAgent_When_AgentIsActive()
         {
             // Arrange
             const int agentId = 1;
 
             var createDate = Now - TimeSpan.FromMilliseconds(MonitoringSettings.AgentActivePeriod - 1000);
 
-            var agentStateCreateDates = new []
+            var agentStateCreateDates = new[]
             {
                 new AgentStateCreateDate
                 {
@@ -167,31 +167,71 @@ namespace MonitoringService.UnitTests.Services
                 },
             };
 
-            var errors = new []
-            {
-                new Error {Message = "error1"},
-                new Error {Message = "error2"},
-            };
-
-            var agentState = new AgentState
-            {
-                AgentId = agentId,
-                CreateDate = createDate,
-                Errors = errors
-            };
-
             _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
                 .Returns(agentStateCreateDates);
 
+            var errors1 = new[]
+            {
+                new Error {Message = "error11"},
+                new Error {Message = "error12"},
+            };
+
+            var agentState1 = new AgentState
+            {
+                AgentId = agentId,
+                CreateDate = createDate,
+                Errors = errors1
+            };
+
+            var errors2 = new[]
+            {
+                new Error {Message = "error21"},
+                new Error {Message = "error22"},
+            };
+
+            var agentState2 = new AgentState
+            {
+                AgentId = agentId,
+                Errors = errors2
+            };
+
+            var errors3 = new[]
+            {
+                new Error {Message = "error31"},
+                new Error {Message = "error32"},
+            };
+
+            var agentState3 = new AgentState
+            {
+                AgentId = 2,
+                Errors = errors3
+            };
+
+            var errors4 = new[]
+            {
+                new Error {Message = "error41"},
+                new Error {Message = "error42"},
+            };
+
+            var agentState4 = new AgentState
+            {
+                AgentId = agentId,
+                Errors = errors4,
+                ReportDate = new DateTime()
+            };
+
             _unitOfWork.Setup(x => x.AgentStateRepository.Get(It.IsAny<Expression<Func<AgentState, bool>>>(), null,
                     MonitoringContext.ErrorsProperty))
-                .Returns(new[] {agentState});
+                .Returns((Expression<Func<AgentState, bool>> filter,
+                        Func<IQueryable<AgentState>, IOrderedQueryable<AgentState>> orderBy,
+                        string includeProperties) =>
+                        new[] {agentState1, agentState2, agentState3, agentState4}.Where(filter.Compile()));
 
             // Act
             var actualResult = _aggregationService.Aggregate(Now).Single().Errors;
 
             // Assert
-            CollectionAssert.AreEqual(errors.Select(x=>x.Message), actualResult);
+            CollectionAssert.AreEqual(errors1.Union(errors2).Select(x => x.Message), actualResult);
         }
     }
 }
