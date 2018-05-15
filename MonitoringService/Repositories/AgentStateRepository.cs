@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using MonitoringService.Models;
 using MonitoringService.Models.Entities;
 
 namespace MonitoringService.Repositories
@@ -14,15 +15,15 @@ namespace MonitoringService.Repositories
             _context = context;
         }
 
-        public DateTime? GetLastAgentStateSaveDate(int agentId)
+        public IEnumerable<AgentStateCreateDate> GetLastAgentStateCreateDates()
         {
-            return _context.AgentStates.Where(s => s.AgentId == agentId).OrderBy(s => s.CreateDate).LastOrDefault()
-                ?.CreateDate;
-        }
-
-        public IEnumerable<int> GetAgentIds()
-        {
-            return _context.AgentStates.Select(s => s.AgentId).Distinct().ToList();
+            return _context.AgentStates
+                .GroupBy(s => s.AgentId)
+                .Select(s => new AgentStateCreateDate
+                {
+                    AgentId = s.Key,
+                    CreateDate = s.Select(x => x.CreateDate).Max()
+                }).ToList();
         }
     }
 }
