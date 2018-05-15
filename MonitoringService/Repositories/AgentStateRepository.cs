@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using MonitoringService.Models;
 using MonitoringService.Models.Entities;
 
 namespace MonitoringService.Repositories
 {
-    public class AgentStateRepository : GenericRepository<AgentState>
+    public class AgentStateRepository : GenericRepository<AgentState>, IAgentStateRepository
     {
         private readonly MonitoringContext _context;
 

@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator", "Emulator\Emulator.csproj", "{5AD23A18-AE9F-449D-BDB6-2D7F32F9E970}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emulator", "Emulator\Emulator.csproj", "{5AD23A18-AE9F-449D-BDB6-2D7F32F9E970}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitoringService", "MonitoringService\MonitoringService.csproj", "{F55ECD74-38CF-4042-B4CF-4E48EA2F7753}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitoringService", "MonitoringService\MonitoringService.csproj", "{F55ECD74-38CF-4042-B4CF-4E48EA2F7753}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitoringService.UnitTests", "MonitoringService.UnitTests\MonitoringService.UnitTests.csproj", "{4753515B-1362-47AC-9F19-CF08E3D21CDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,15 @@ Global
 		{F55ECD74-38CF-4042-B4CF-4E48EA2F7753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F55ECD74-38CF-4042-B4CF-4E48EA2F7753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F55ECD74-38CF-4042-B4CF-4E48EA2F7753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4753515B-1362-47AC-9F19-CF08E3D21CDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4753515B-1362-47AC-9F19-CF08E3D21CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4753515B-1362-47AC-9F19-CF08E3D21CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4753515B-1362-47AC-9F19-CF08E3D21CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {132A4970-F94C-4A37-927A-83CB888EE25E}
 	EndGlobalSection
 EndGlobal

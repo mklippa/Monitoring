@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
-using MonitoringService.Models;
 
 namespace MonitoringService.Repositories
 {
@@ -8,14 +6,14 @@ namespace MonitoringService.Repositories
     {
         private static readonly object Locker = new object();
         private readonly MonitoringContext _context;
-        private AgentStateRepository _agentStateRepository;
+        private IAgentStateRepository _agentStateRepository;
 
         public UnitOfWork(MonitoringContext context)
         {
             _context = context;
         }
 
-        public AgentStateRepository AgentStateRepository =>
+        public IAgentStateRepository AgentStateRepository =>
             _agentStateRepository ?? (_agentStateRepository = new AgentStateRepository(_context));
 
         public void Save()
