@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MonitoringService.Models;
 using MonitoringService.Models.Entities;
@@ -14,9 +15,9 @@ namespace MonitoringService.Repositories
             _context = context;
         }
 
-        public IEnumerable<AgentStateCreateDate> GetLastAgentStateCreateDates()
+        public IEnumerable<AgentStateCreateDate> GetLastAgentStateCreateDates(DateTime now)
         {
-            return _context.AgentStates
+            return _context.AgentStates.Where(s => s.CreateDate <= now)
                 .GroupBy(s => s.AgentId)
                 .Select(s => new AgentStateCreateDate
                 {

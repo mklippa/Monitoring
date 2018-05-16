@@ -21,7 +21,7 @@ namespace MonitoringService.Services
 
         public IEnumerable<AgentAggregatedState> Aggregate(DateTime now)
         {
-            var lastAgentStateCreateDates = _storage.AgentStateRepository.GetLastAgentStateCreateDates().ToArray();
+            var lastAgentStateCreateDates = _storage.AgentStateRepository.GetLastAgentStateCreateDates(now).ToArray();
 
             var separator = now - TimeSpan.FromMilliseconds(_settings.Value.AgentActivePeriod);
 
@@ -42,7 +42,7 @@ namespace MonitoringService.Services
             {
                 var activeIds = active.Select(x => x.AgentId);
                 unaggregatedActiveAgentStates = _storage.AgentStateRepository.Get(
-                    s => !s.ReportDate.HasValue && activeIds.Contains(s.AgentId),
+                    s => !s.ReportDate.HasValue && activeIds.Contains(s.AgentId) && s.CreateDate <= now,
                     includeProperties: MonitoringContext.ErrorsProperty).ToArray();
 
                 result.AddRange(active.Select(item => new AgentAggregatedState

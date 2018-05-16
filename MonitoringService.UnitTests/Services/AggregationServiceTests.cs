@@ -48,7 +48,7 @@ namespace MonitoringService.UnitTests.Services
                 new AgentStateCreateDate {AgentId = expectedResult},
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             // Act
@@ -69,7 +69,7 @@ namespace MonitoringService.UnitTests.Services
                 new AgentStateCreateDate {CreateDate = expectedResult},
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             // Act
@@ -90,7 +90,7 @@ namespace MonitoringService.UnitTests.Services
                 new AgentStateCreateDate {CreateDate = createDate},
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             // Act
@@ -111,7 +111,7 @@ namespace MonitoringService.UnitTests.Services
                 new AgentStateCreateDate {CreateDate = createDate},
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             // Act
@@ -135,7 +135,7 @@ namespace MonitoringService.UnitTests.Services
             };
 
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             var options = new Mock<IOptions<MonitoringSettings>>();
@@ -168,7 +168,7 @@ namespace MonitoringService.UnitTests.Services
                 },
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             var errors1 = new[]
@@ -221,12 +221,26 @@ namespace MonitoringService.UnitTests.Services
                 ReportDate = new DateTime()
             };
 
+            var errors5 = new[]
+            {
+                new Error {Message = "error51"},
+                new Error {Message = "error52"},
+            };
+
+            var agentState5 = new AgentState
+            {
+                AgentId = agentId,
+                Errors = errors5,
+                CreateDate = Now.AddSeconds(1)
+            };
+
             _unitOfWork.Setup(x => x.AgentStateRepository.Get(It.IsAny<Expression<Func<AgentState, bool>>>(), null,
                     MonitoringContext.ErrorsProperty))
                 .Returns((Expression<Func<AgentState, bool>> filter,
                         Func<IQueryable<AgentState>, IOrderedQueryable<AgentState>> orderBy,
                         string includeProperties) =>
-                        new[] {agentState1, agentState2, agentState3, agentState4}.Where(filter.Compile()));
+                        new[] {agentState1, agentState2, agentState3, agentState4, agentState5}
+                            .Where(filter.Compile()));
 
             // Act
             var actualResult = _aggregationService.Aggregate(Now).Single().Errors;
@@ -252,7 +266,7 @@ namespace MonitoringService.UnitTests.Services
                 },
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             var errors1 = new[]
@@ -295,7 +309,7 @@ namespace MonitoringService.UnitTests.Services
                 },
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             var errors1 = new[]
@@ -338,7 +352,7 @@ namespace MonitoringService.UnitTests.Services
                 },
             };
 
-            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates())
+            _unitOfWork.Setup(x => x.AgentStateRepository.GetLastAgentStateCreateDates(Now))
                 .Returns(agentStateCreateDates);
 
             var errors1 = new[]
